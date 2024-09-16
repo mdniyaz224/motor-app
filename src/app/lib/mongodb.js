@@ -29,7 +29,7 @@
 
 import { MongoClient } from 'mongodb';
 
-const uri ='mongodb://127.0.0.1:27017/mydatabase';
+const uri = 'mongodb://127.0.0.1:27017/mydatabase';;
 let client;
 let clientPromise;
 
@@ -39,14 +39,14 @@ if (!uri) {
 
 try {
   if (process.env.NODE_ENV === 'development') {
-    // In development mode, use a global variable so we don't create a new connection every time
+    // In development, use a global variable to avoid reconnecting every time
     if (!global._mongoClientPromise) {
-      client = new MongoClient(uri);
+      client = new MongoClient(uri); // No need for useNewUrlParser or useUnifiedTopology
       global._mongoClientPromise = client.connect();
     }
     clientPromise = global._mongoClientPromise;
   } else {
-    // In production mode, it's ok to create a new connection for each request
+    // In production, it's fine to create a new connection for each request
     client = new MongoClient(uri);
     clientPromise = client.connect();
   }
