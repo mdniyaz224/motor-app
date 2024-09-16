@@ -29,7 +29,7 @@
 
 import { MongoClient } from 'mongodb';
 
-const uri = 'mongodb://127.0.0.1:27017/mydatabase';;
+const uri = 'mongodb+srv://mdniyaz1842000:rGompkeQ3drsKjTv@cluster0.vayvh.mongodb.net/motor-worlds?retryWrites=true&w=majority&appName=Cluster0';
 let client;
 let clientPromise;
 
