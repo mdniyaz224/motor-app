@@ -1,10 +1,10 @@
 import { MongoClient } from 'mongodb';
 
 const uri = 'mongodb://127.0.0.1:27017/mydatabase';
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-};
+// const options = {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// };
 
 let client;
 let clientPromise;
