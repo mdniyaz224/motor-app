@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardActions, CardContent, CardHeader, TextField, Typography } from "@mui/material";
 import TableComponent from '../components/tabel'; // Import the TableComponent
 
 const tableHeaders = [
@@ -191,11 +191,13 @@ console.log(parsedData,"parsedData");
   };
 
   return (
-    <Box sx={{ p: 4, backgroundColor: "orange" }}>
+    <Box sx={{ p: 4,}}>
+    <Card sx={{p:2 ,backgroundColor:'#edf4f5'}}>
+      <CardContent>
       <Typography variant="h4" gutterBottom>
         Data Entry Form
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
+      <Box component="form" onSubmit={handleSubmit} >
         <TextField
           label="Enter formatted text"
           multiline
@@ -206,10 +208,18 @@ console.log(parsedData,"parsedData");
           onChange={(e) => setInputText(e.target.value)}
           sx={{ mb: 2 }}
         />
+        <CardActions>
         <Button type="submit" variant="contained" color="primary">
           {editIndex === -1 ? "Submit" : "Update"}
         </Button>
+        </CardActions>
+       
       </Box>
+      </CardContent>
+      </Card>
+      <Box mt={5}>
+      <Card  sx={{backgroundColor:'#edf4f5'}}>
+        <CardContent sx={{mt:1}}>
       <Typography variant="h5" gutterBottom>
         Data Table
       </Typography>
@@ -219,6 +229,9 @@ console.log(parsedData,"parsedData");
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+      </CardContent>
+      </Card>
+      </Box>
     </Box>
   );
 }

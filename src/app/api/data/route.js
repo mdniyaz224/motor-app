@@ -1,15 +1,9 @@
-// import clientPromise from '../../../lib/mongodb';
-
 import clientPromise from "@/app/lib/mongodb";
-
 export async function GET(req) {
   try {
     const client = await clientPromise;
     const db = client.db('mydatabase'); // Replace with your database name
-    const data = await db.collection('mycollection').find({}).toArray();
-    console.log(data,"data");
-    
-    
+    const data = await db.collection('mycollection').find({}).toArray();    
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
@@ -91,81 +85,7 @@ export async function PUT(req, { params }) {
   }
 }
 
-// register-----------------------------------
 
-
-export async function Register(req) {
-  try {
-    const db = await getDb();
-    const { username, email, password } = await req.json();
-
-    const existingUser = await db.collection('users').findOne({ email });
-    if (existingUser) {
-      return new Response(JSON.stringify({ message: 'Email already in use' }), {
-        status: 409,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { username, email, password: hashedPassword };
-
-    const result = await db.collection('users').insertOne(newUser);
-
-    return new Response(JSON.stringify(result), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-
-// login----------------------------------------------------------------------------
-
-
-export async function login(req) {
-  try {
-    const db = await getDb();
-    const { email, password } = await req.json();
-
-    const user = await db.collection('users').findOne({ email });
-    if (!user) {
-      return new Response(JSON.stringify({ message: 'User not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return new Response(JSON.stringify({ message: 'Invalid credentials' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
-
-    return new Response(JSON.stringify({ token }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error logging in:', error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
 
 
 // Forgot Password API-------------------------------------------------------------------

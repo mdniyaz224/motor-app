@@ -29,8 +29,6 @@ const TableComponent = ({ data, tableHeaders, onEdit, onDelete }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-console.log(data,"data---");
-
   const filteredData = data
   .filter((entry) => {
     // Filter by name if search term is provided
@@ -87,15 +85,15 @@ console.log(data,"data---");
 
       {/* Data Table */}
       <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{background:'gray',color:'white'}}>
-            <TableRow sx={{ textWrap: "nowrap" }}>
+        <Table sx={{backgroundColor:'#edf4f5'}}>
+          <TableHead sx={{background:'black',}}>
+            <TableRow sx={{ textWrap: "nowrap", }}>
               {tableHeaders.map((header) => (
-                <TableCell key={header.key}>
+                <TableCell key={header.key} sx={{color:'white'}}>
                   <strong>{header.label}</strong>
                 </TableCell>
               ))}
-              <TableCell key="actions">
+              <TableCell key="actions" sx={{color:'white'}}>
                 <strong>Actions</strong>
               </TableCell>
             </TableRow>
