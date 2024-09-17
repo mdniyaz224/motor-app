@@ -1,4 +1,5 @@
-import clientPromise from "@/app/lib/mongodb";
+// import clientPromise from "@/app/lib/mongodb";
+import clientPromise from '../../../lib/mongodb'
 import { ObjectId } from "mongodb";
 
 
