@@ -3,6 +3,9 @@
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { Box, Card, CardContent, CardActions, Button, Input, Typography } from '@mui/material'
+import { useRouter } from 'next/navigation'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string().min(6, 'Too Short!').required('Required'),
@@ -12,7 +15,34 @@ const ResetPasswordSchema = Yup.object().shape({
 })
 
 export default function ResetPasswordForm() {
-  const route=useRouter();
+  const router = useRouter();
+
+  const reset = async (values, { setSubmitting }) => {
+    try {
+      const response = await fetch('/api/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: values.password, token: 'resetTokenHere' }), // Add token here if required
+      });
+
+      const data = await response.json();
+      if (response.status === 200) {
+        alert(`Password reset successful!`);
+        toast.success(data.message || 'Password reset successful.')
+        router.push('./login');
+      } else {
+        toast.error(data.message || 'An error occurred')
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error)
+
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Box
@@ -21,7 +51,7 @@ export default function ResetPasswordForm() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-         backgroundColor:'#edf4f5'
+        backgroundColor: '#edf4f5',
       }}
     >
       <Card sx={{ maxWidth: 400, width: '100%', p: 3 }}>
@@ -32,13 +62,7 @@ export default function ResetPasswordForm() {
           <Formik
             initialValues={{ password: '', confirmPassword: '' }}
             validationSchema={ResetPasswordSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2))
-                setSubmitting(false)
-                onSwitchForm('login')
-              }, 400)
-            }}
+            onSubmit={reset}
           >
             {({ errors, touched, isSubmitting }) => (
               <Form>
@@ -111,13 +135,15 @@ export default function ResetPasswordForm() {
 
         <CardActions sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
           <Typography variant="body2">
-            <Button variant="text"  onClick={() =>route.push('./login')}>
+            <Button variant="text" onClick={() => router.push('./login')}>
               Back to Login
             </Button>
           </Typography>
         </CardActions>
       </Card>
+      <ToastContainer />
     </Box>
-  )
+  );
 }
+
 ResetPasswordForm.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;

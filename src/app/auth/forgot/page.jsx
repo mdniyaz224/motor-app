@@ -4,13 +4,38 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { Box, Card, CardContent, CardActions, Button, Input, Typography } from '@mui/material'
 import { useRouter } from 'next/navigation'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
 })
 
 export default function ForgotPasswordForm() {
-    const route=useRouter();
+  const router = useRouter();
+const forgotApi =async(values,{ setSubmitting }) =>  {  
+  try {
+    const response = await fetch('/api/forgot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: values.email }),
+    });
+    
+    const data = await response.json();    
+    if (response.status === 200) {
+      toast.info(`Password reset link sent to ${values.email}`)
+      router.push('./login');
+    } else {
+      toast.error(data.message || 'An error occurred')
+    }
+  } catch (error) {
+    toast.error(error)
+  } finally {
+    setSubmitting(false);
+  }
+}
   return (
     <Box
       sx={{
@@ -18,29 +43,23 @@ export default function ForgotPasswordForm() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:'#edf4f5'
+        backgroundColor: '#edf4f5',
       }}
     >
       <Card sx={{ maxWidth: 400, width: '100%', p: 3 }}>
         <CardContent>
-          <Typography variant="h5" component="div" gutterBottom align="center">
+          <Typography variant="h5" gutterBottom align="center">
             Forgot Password
           </Typography>
           <Formik
             initialValues={{ email: '' }}
             validationSchema={ForgotPasswordSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(`Password reset link sent to ${values.email}`)
-                setSubmitting(false)
-                onSwitchForm('login')
-              }, 400)
-            }}
+            onSubmit={forgotApi}
           >
             {({ errors, touched, isSubmitting }) => (
               <Form>
                 <Box mb={3}>
-                  <Typography variant="body1" component="label" htmlFor="email">
+                  <Typography component="label" htmlFor="email">
                     Email
                   </Typography>
                   <Field
@@ -80,16 +99,13 @@ export default function ForgotPasswordForm() {
           </Formik>
         </CardContent>
 
-        <CardActions sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
-          <Typography variant="body2">
-            <Button variant="text"onClick={() =>route.push('./login')}>
-              Back to Login
-            </Button>
-          </Typography>
+        <CardActions sx={{ justifyContent: 'center', mt: 2 }}>
+          <Button variant="text" onClick={() => router.push('./login')}>
+            Back to Login
+          </Button>
         </CardActions>
       </Card>
+      <ToastContainer />
     </Box>
-  )
+  );
 }
-
-ForgotPasswordForm.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;

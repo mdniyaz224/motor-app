@@ -1,4 +1,3 @@
-// app/auth/layout.tsx
 
 import {  Container } from "@mui/material";
 

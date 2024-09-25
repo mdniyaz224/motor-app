@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import * as Yup from 'yup'
 import AuthLayout from '../layout'
 import { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -14,10 +16,9 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginForm() {
   const route = useRouter();
-  const [error, setError] = useState(null); // State to handle error messages
+  // const [error, setError] = useState(null); // State to handle error messages
 
   const handleLogin = async (values, { setSubmitting }) => {
-    setError(null); // Reset error message
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -26,24 +27,15 @@ export default function LoginForm() {
         },
         body: JSON.stringify(values),
       });
-      console.log(response,"data");
-      const data = await response.json();
-      console.log(data,"data");
-      
+      const data = await response.json();      
       if (!response.ok) {
-        // Handle errors
-        setError(data.message);
+        toast.error(data.message || 'Login failed. Please try again.')
         setSubmitting(false);
         return;
       }
-
-      // Handle successful login, e.g., redirect or store token
-      alert('Login successful!');
-      // You can redirect or save the token as needed here
-
+      toast.success('Login successful!');
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Something went wrong. Please try again.');
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -63,11 +55,6 @@ export default function LoginForm() {
           <Typography variant="h5" component="div" gutterBottom align="center">
             Login
           </Typography>
-          {error && (
-            <Typography variant="body2" color="error" align="center">
-              {error}
-            </Typography>
-          )}
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={LoginSchema}
@@ -154,6 +141,7 @@ export default function LoginForm() {
           </Typography>
         </CardActions>
       </Card>
+      <ToastContainer />
     </Box>
   )
 }

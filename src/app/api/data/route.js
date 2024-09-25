@@ -25,12 +25,10 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const client = await clientPromise;
-    const db = client.db('mydatabase'); // Replace with your database name
+    const db = client.db('mydatabase');
     const data = await req.json();
     
-    const result = await db.collection('mycollection').insertOne(data);
-    console.log(result,"result--");
-    
+    const result = await db.collection('mycollection').insertOne(data);    
     return new Response(JSON.stringify(result), {
       status: 201,
       headers: {
@@ -86,80 +84,6 @@ export async function PUT(req, { params }) {
   }
 }
 
-
-
-
-// Forgot Password API-------------------------------------------------------------------
-
-
-export async function forgot (req) {
-  try {
-    const db = await getDb();
-    const { email } = await req.json();
-
-    const user = await db.collection('users').findOne({ email });
-    if (!user) {
-      return new Response(JSON.stringify({ message: 'User not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Generate reset token
-    const resetToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
-
-    // In a real application, you'd send this token via email to the user
-    // But here we'll return it in the response (for testing)
-    return new Response(JSON.stringify({ resetToken }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error sending reset email:', error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-
-
-//Reset Password API -----------------------------------------------------------
-
-export async function reset(req) {
-  try {
-    const db = await getDb();
-    const { resetToken, newPassword } = await req.json();
-
-    let decoded;
-    try {
-      decoded = jwt.verify(resetToken, JWT_SECRET);
-    } catch (error) {
-      return new Response(JSON.stringify({ message: 'Invalid or expired token' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const result = await db.collection('users').updateOne(
-      { _id: new ObjectId(decoded.userId) },
-      { $set: { password: hashedPassword } }
-    );
-
-    return new Response(JSON.stringify({ message: 'Password reset successful' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error resetting password:', error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
 
 
 //Authentication Middleware (Optional for protected routes)----------------------

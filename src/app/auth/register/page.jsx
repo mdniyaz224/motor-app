@@ -4,6 +4,9 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { Box, Card, CardContent, CardActions, Button, Input, Typography } from '@mui/material'
 import { useRouter } from 'next/navigation'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { Router } from 'next/router'
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -32,11 +35,11 @@ export default function RegisterForm() {
         });
     
         if (response.ok) {
-          console.log('User registered successfully');
-          router.push('/login'); // Redirect to login page on success
+          toast.success('User registered successfully');
+          Router.push('/login'); // Redirect to login page on success
         } else {
           const errorData = await response.json();
-          console.error('Registration failed:', errorData.message);
+          toast.success('Registration failed:', errorData.message);
         }
       } catch (error) {
         console.error('An error occurred:', error);
@@ -193,6 +196,7 @@ export default function RegisterForm() {
           </Typography>
         </CardActions>
       </Card>
+      <ToastContainer />
     </Box>
   )
 }
