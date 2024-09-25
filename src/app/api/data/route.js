@@ -88,23 +88,23 @@ export async function PUT(req, { params }) {
 
 //Authentication Middleware (Optional for protected routes)----------------------
 
-export function authenticate(req) {
-  const token = req.headers.get('Authorization')?.split(' ')[1];
+// export function authenticate(req) {
+//   const token = req.headers.get('Authorization')?.split(' ')[1];
 
-  if (!token) {
-    return new Response(JSON.stringify({ message: 'No token provided' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+//   if (!token) {
+//     return new Response(JSON.stringify({ message: 'No token provided' }), {
+//       status: 401,
+//       headers: { 'Content-Type': 'application/json' },
+//     });
+//   }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded; // Return decoded token (user data)
-  } catch (error) {
-    return new Response(JSON.stringify({ message: 'Invalid token' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
+//   try {
+//     const decoded = jwt.verify(token, JWT_SECRET);
+//     return decoded; // Return decoded token (user data)
+//   } catch (error) {
+//     return new Response(JSON.stringify({ message: 'Invalid token' }), {
+//       status: 401,
+//       headers: { 'Content-Type': 'application/json' },
+//     });
+//   }
+// }
