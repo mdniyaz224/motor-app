@@ -16,8 +16,6 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginForm() {
   const route = useRouter();
-  // const [error, setError] = useState(null); // State to handle error messages
-
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       const response = await fetch('/api/login', {
@@ -35,6 +33,7 @@ export default function LoginForm() {
       }
       localStorage.setItem('auth-token', data.token);
       toast.success('Login successful!');
+      route.push('../dashboard/list');
     } catch (error) {
       toast.error('Something went wrong. Please try again.');
     } finally {
