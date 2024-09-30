@@ -33,6 +33,7 @@ export default function LoginForm() {
         setSubmitting(false);
         return;
       }
+      localStorage.setItem('auth-token', data.token);
       toast.success('Login successful!');
     } catch (error) {
       toast.error('Something went wrong. Please try again.');
